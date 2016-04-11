@@ -8,50 +8,34 @@ import React, {
   Component,
   StyleSheet,
   Text,
-  View
-} from 'react-native';
-import Repo from './components/repo'
-import RepoDetail from './components/RepoDetail'
-class mayyamak extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {repos: [], active: null}
-    this.handleClick=this.handleClick.bind(this)
-  }
-  componentDidMount() {
-    fetch('https://api.github.com/users/petehunt/repos?per_page=5')
-    .then((response)=>{
-      return response.json()
-    })
-    .then((repos) => {
-      this.setState({repos})
-      console.log(repos);
-    })
-  }
+  View,
+  Navigator
+} from 'react-native'
+import Main from './Main'
+import Repo from './components/Repo'
+delete GLOBAL.XMLHttpRequest;
 
-  handleClick(repo) {
-    this.setState({active: repo})
-    console.log("clicked!");
-  }
+class mayyamak extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-      <Text style={styles.welcome}>
-      Welcome Maryam!
-      {this.state.repos.map((repo) => {
-        return <Repo name={repo.name} active={repo==this.state.active} onClick={() => {this.handleClick(repo)}} />
-      })}
-      </Text>
-      <RepoDetail repo={this.state.active} />
-      <Text style={styles.instructions}>
-      Salaaaam
-      </Text>
-      <Text style={styles.instructions}>
-      Press Cmd+R to reload,{'\n'}
-      Cmd+D or shake for dev menu
-      </Text>
-      </View>
+      <Navigator
+        initialRoute={{name: 'My First Scene', index: 0}}
+        renderScene={(route, navigator) => {
+            switch (route.name) {
+              case 'Repo':
+                return <Repo
+                active={route.repo.active}
+                repo={route.repo}
+                onClick={() => {navigator.pop(); console.log('pop!');}}
+                  />
+              default:
+                return <Main navigator={navigator} />
+            }
+          }
+
+        }
+      />
     );
   }
 }
